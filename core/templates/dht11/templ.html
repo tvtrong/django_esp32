@@ -1,0 +1,16 @@
+{% for field in f %}
+
+<div class="fieldWrapper">
+    <p>hidden : {{ field.is_hidden }}</p>
+    <p>errors : {{ field.errors }}</p>
+    <p>id_for_label : {{ field.id_for_label }}</p>
+    <p>label : {{ field.label }}</p>
+    <p>label_tag : {{ field.label_tag }}</p>
+    <p>value : {{ field.value }}</p>
+    <p>html_name : {{ field.html_name }}</p>
+    <p>{{ field.label_tag }} : {{ field }}</p>
+    {% if field.help_text %}
+    <p class="help">help_text : {{ field.help_text|safe }}</p>
+    {% endif %}
+</div>
+{% endfor %}

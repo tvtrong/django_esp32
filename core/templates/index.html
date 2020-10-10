@@ -1,0 +1,67 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Home {% endblock title %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'assets/css/flip_card.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/notify.css' %}">
+{% endblock stylesheets %}
+{% block content %}
+<div class="page-inner mt--5">
+    <div class="row mt--5">
+        <div class="card darth w-100">
+            <div class="face front">
+                {% comment %}<img class="logo" src="{% static 'assets/img/logo.svg' %}" />{% endcomment %}
+                <h2><small>welcome</small><br/>RQS</h2>
+                <cite>
+                  <a href="#" target="_blank">
+                    Copyright &copy; <script>document.write(new Date().getFullYear())</script>
+                  </a>
+                </cite>
+            </div>
+            <div class="face back">
+                <div class="description"><b>Love</b><br>
+                Simple Card Flip design is made for digital movie posters. If you are running an entertainment website, this design will come in handy for you. In this design, you have space to add a big poster image in the front and the related contents on the back. Another attractive option in this card design is the front side image has hover animation. The developer has smartly handled the modern frameworks to give you interactive features on the card. Since the hover effect is used for the image, the card flipping animation triggers when you click on the card. Speaking of posters, if you are a poster designer, take a look at our poster mockup collection to give a lively look to your poster designs.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt--5">
+      
+    </div>
+</div>
+{% endblock content %}
+{% block javascripts %}
+<script>
+    $(".card").click(function(e){
+      $(e.currentTarget).toggleClass("flip");
+    });
+</script>
+<script>
+	//Notify
+	$.notify({
+		icon: '/static/assets/img/logo.svg',
+		title: 'Welcome back',
+		message: 'Have a Nice day..',
+	},{
+		type: 'minimalist',
+    allow_dismiss: true,
+		placement: {
+			from: "top",
+			align: "center"
+		},
+    z_index: 1031,
+    animate: {
+		enter: 'animated fadeInDown',
+		exit: 'animated fadeOutUp'
+	},
+		delay: 1000,
+    icon_type: 'image',
+    template: '<div data-notify="container" class="col-xs-11 col-sm-3 alert alert-{0}" role="alert">' +
+		'<img data-notify="icon" class="img-circle pull-left">' +
+		'<span data-notify="title">{1}</span>' +
+		'<span data-notify="message">{2}</span>' +
+	'</div>'
+	});
+	</script>
+{% endblock javascripts %}

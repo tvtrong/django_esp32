@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	
+	<title>
+		RQS - {% block title %}{% endblock %} 
+	</title>
+
+	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+	<link rel="icon" href="/static/assets/img/icon.ico" type="image/x-icon"/>
+
+	<!-- Fonts and icons -->
+	<script src="/static/assets/js/plugin/webfont/webfont.min.js"></script>
+	<script>
+		WebFont.load({
+			google: {"families":["Lato:300,400,700,900"]},
+			custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], 
+			urls: ['/static/assets/css/fonts.min.css']},
+			active: function() {
+				sessionStorage.fonts = true;
+			}
+		});
+
+	</script>
+	
+
+	<!-- CSS Files -->
+	<link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/static/assets/css/atlantis.min.css">
+
+	<!-- CSS Just for demo purpose, don't include it in your project -->
+	<link rel="stylesheet" href="/static/assets/css/demo.css">
+
+	{% comment %}lllllllllllllllllllllllllll{% endcomment %}
+	<!-- Favicon - loaded as static -->
+  <link rel="icon" href="static/assets/img/brand/favicon.ico" type="image/png" media="print" onload="this.media='all'"/>
+  <noscript><link rel="icon" href="static/assets/img/brand/favicon.ico" type="image/png"/></noscript>
+
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" media="print" onload="this.media='all'"/>
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap"/></noscript>
+
+  <!-- Icons -->
+  <script defer src="https://kit.fontawesome.com/189832a678.js" crossorigin="anonymous"></script>
+  <!-- Plotly.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.54.6/plotly.min.js"></script>
+
+    <!-- Specific CSS goes HERE -->
+    {% block stylesheets %}{% endblock stylesheets %}
+
+</head>
+<body data-background-color="dark" name="top">
+
+	<div class="wrapper {% block layout %}{% endblock layout %}">
+
+		{% include 'includes/navigation.html' %}
+
+		{% include 'includes/sidenav.html' %}
+
+		<div class="main-panel">
+
+			<div class="content">
+				<div class="panel-header bg-secondary-gradient">
+			    <div class="page-inner py-5">
+			        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+			        </div>
+			    </div>
+			</div>
+
+				{% block content %}	{% endblock content %}
+			
+			</div>
+
+			{% include 'includes/footer.html' %}
+
+		</div>
+		
+		{% include 'includes/aside-settings.html' %}
+
+	</div>
+
+	{% include 'includes/scripts.html' %}
+	
+	<!-- Specific JS goes HERE -->
+    {% block javascripts %}
+	{% endblock javascripts %}
+	
+</body>
+</html>

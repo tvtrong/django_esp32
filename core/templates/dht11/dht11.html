@@ -1,0 +1,489 @@
+{% extends "layouts/base.html" %} {% load static %} {% load humanize %} {% block title %} DHT11 {% endblock title %} {% block stylesheets %}
+<style>
+    .GaugeMeter {
+        position: Relative;
+        text-align: Center;
+        overflow: Hidden;
+        cursor: Default;
+        display: inline-block;
+    }
+    
+    .GaugeMeter SPAN,
+    .GaugeMeter B {
+        width: 45%;
+        position: Absolute;
+        text-align: Center;
+        display: Inline-Block;
+        color: RGBa(0, 0, 0, .8);
+        font-weight: 100;
+        font-family: "Open Sans", Arial;
+        overflow: Hidden;
+        white-space: NoWrap;
+        text-overflow: Ellipsis;
+        margin: 0 23%;
+    }
+    
+    .GaugeMeter[data-style="Semi"] B {
+        width: 100%;
+        margin: 0 10%;
+    }
+    
+    .GaugeMeter S,
+    .GaugeMeter U {
+        text-decoration: None;
+        font-size: .90em;
+        font-weight: 200;
+        opacity: .6;
+    }
+    
+    .GaugeMeter B {
+        color: #000;
+        font-weight: 200;
+        opacity: .8;
+    }
+</style>
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet"> {% endblock stylesheets %} {% block content %}
+<div class="page-inner mt--5">
+    <div class="row mt--5 justify-content-center">
+        <div class="col-sm-4 col-md-4">
+            <div class="card card-round">
+                <div class="card-body ">
+                    <div class="row">
+                        <div class="col-4 col-stats">
+                        </div>
+                        <div class="col-4">
+                            <div id="temperature" class="GaugeMeter" data-percent="" data-label="&#8451;">
+                            </div>
+                        </div>
+                        <div class="col-4 col-stats">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <div class="card card-round">
+                <div class='card-body'>
+                    <div class="row justify-content-center">
+                        <div class="col-4"></div>
+                        <div class="col-4">
+                            <input name="led" id="led-state" type="checkbox" data-toggle="toggle" data-on="Tắt<br>LED" data-off="Bật<br>LED">
+                        </div>
+                        <div class="col-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <div class="card card-round">
+                <div class="card-body ">
+                    <div class="row justify-content-center">
+                        <div class="col-4 col-stats">
+                        </div>
+                        <div class="col-4">
+                            <div id="humidity" class="GaugeMeter" data-percent="" data-label="&#37;">
+                            </div>
+                        </div>
+                        <div class="col-4 col-stats">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='row justify-content-center'>
+        <div class='col-12'>
+            <div class="card-round shadow-lg mb-5">
+                <div class="card-header">
+                    <div class="card-title"><i class="fa fa-line-chart">&nbsp;&nbsp;Biểu đồ Độ ẩm theo thời gian thực</i> </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas height="40%" width="100%" id="myHumidity"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class='col-md-8'>
+            <div class="card-round shadow-lg mb-5">
+                <div class='card-header'>DHT11 Sensor Chart</div>
+                <div class='card-block'>
+                    <div id="dashboard_div">
+                        <div id="control_div" style="width: 100%; height: 100%"></div>
+                        <div id="daily_container_count_lineChart" style="width: 100%; height: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card-round shadow-lg mb-5">
+                <div class='card-header'>DHT11 Sensor Table by TimeRange</div>
+                <div class='card-block'>
+                    <div style="width: 100%; height: 400px;" id="table_div"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <h4 class="card-title"><i class="fas fa-table">&nbsp;&nbsp;Bảng dữ liệu</i></h4>
+                        &nbsp;&nbsp;
+                        <div class="form-group ml-md-auto">
+                            <div class="input-group">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary btn-border dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-layer-group"></i></button>
+                                    <div class="dropdown-menu">
+                                        <a href="{% url 'dht11:to_xlsx' %}" class="dropdown-item">
+                                            <i class="fas fa-file-excel" style="font-size:18px;color:primary"></i>&nbsp;&nbsp; Xuất EXCEL
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="multi-filter-select" class="display table-responsive table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Time Update</th>
+                                    <th>Temperature</th>
+                                    <th>Humidity</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Time Update</th>
+                                    <th>Temperature</th>
+                                    <th>Humidity</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for item in dht11 %}
+                                <tr>
+                                    <td scope="row">{{ item.id }}</td>
+                                    <td>{{item.timestamp|naturaltime}}</td>
+                                    <td>{{item.temperature}}&#8451;</td>
+                                    <td>{{item.humidity}}&#37;</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %} {% block javascripts %}
+
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js">
+</script>
+<script src="{% static 'assets/js/reconnect_socket/reconnecting_websocket.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/min/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@1.8.0"></script>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="{% static 'assets/js/GaugeMeter.js' %}"></script>
+<script>
+    $(".GaugeMeter").gaugeMeter();
+</script>
+
+<script>
+    /*
+                        async function fetchApi() {
+                            if (window.fetch) {
+                                try {
+                                    let res = await fetch('/dht11/api/list/');
+                                    if (!res.ok) {
+                                        console.error("not able to get data from given url !");
+                                        return;
+                                    }
+                                    let jsonData = await res.json();
+                                    for (i = 0; i < jsonData.length; i++) {
+                                        data.addRow([new Date(jsonData[i]['timestamp']), parseFloat(jsonData[i]['temperature']), parseFloat(jsonData[i]['humidity'])]);
+                                        dataOther.addRow([new Date(jsonData[i]['timestamp']), parseFloat(jsonData[i]['temperature']), parseFloat(jsonData[i]['humidity'])])
+                                    }
+                                } catch (ex) {
+                                    console.error(ex);
+                                }
+                            } else {
+                                console.error("Your browser doesn't support fetch api..");
+                            }
+                        }
+                        */
+
+    google.charts.load('current', {
+        callback: function() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', 'thời gian');
+            data.addColumn('number', 'Nhiệt độ');
+            data.addColumn('number', 'Độ ẩm');
+
+
+            var dataOther = new google.visualization.DataTable();
+            dataOther.addColumn('date', 'Thời gian');
+            dataOther.addColumn('number', 'Nhiệt độ');
+            dataOther.addColumn('number', 'Độ ẩm');
+
+            const nd = JSON.parse("{{nd|escapejs}}");
+            const da = JSON.parse("{{da|escapejs}}");
+            const tg = `{{tg|safe}}`;
+            const tg1 = tg.split(',');
+
+            for (i = 0; i < nd.length; i++) {
+                data.addRow([new Date(tg1[i].split("'")[1]), parseFloat(nd[i]), parseFloat(da[i])]);
+                dataOther.addRow([new Date(tg1[i].split("'")[1]), parseFloat(nd[i]), parseFloat(da[i])])
+            }
+
+
+            var chart = new google.visualization.ChartWrapper({
+                chartType: 'LineChart',
+                containerId: 'daily_container_count_lineChart',
+                options: {
+                    theme: 'maximized'
+                }
+            });
+
+            var control = new google.visualization.ControlWrapper({
+                controlType: 'ChartRangeFilter',
+                containerId: 'control_div',
+                options: {
+                    filterColumnIndex: 0
+                }
+            });
+
+            var table = new google.visualization.ChartWrapper({
+                chartType: 'Table',
+                containerId: 'table_div',
+                dataTable: dataOther,
+                options: {
+                    sortColumn: 1
+                }
+            });
+
+            google.visualization.events.addListener(control, 'statechange', function() {
+                var state = control.getState();
+                var view = new google.visualization.DataView(dataOther);
+                view.setRows(view.getFilteredRows([{
+                    column: 0,
+                    minValue: state.range.start,
+                    maxValue: state.range.end
+                }]));
+                table.setDataTable(view);
+                table.draw();
+            });
+
+            var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
+            dashboard.bind([control], [chart]);
+            dashboard.draw(data);
+            table.draw();
+        },
+        packages: ['controls', 'corechart', 'table']
+    });
+</script>
+<script>
+    var chartColors = {
+        red: 'rgb(255, 99, 132)',
+        orange: 'rgb(255, 159, 64)',
+        yellow: 'rgb(255, 205, 86)',
+        green: 'rgb(75, 192, 192)',
+        blue: 'rgb(54, 162, 235)',
+        purple: 'rgb(153, 102, 255)',
+        grey: 'rgb(201, 203, 207)'
+    };
+
+    function randomHumidity() {
+        return parseFloat($("#humidity")[0].outerText.slice(0, 2));
+    }
+
+    function onRefresh_h(chart) {
+        chart.config.data.datasets.forEach(function(dataset) {
+            dataset.data.push({
+                x: Date.now(),
+                y: randomHumidity()
+            });
+        });
+    }
+
+    var color = Chart.helpers.color;
+    var config_h = {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'độ ẩm',
+                fill: false,
+                backgroundColor: color(chartColors.blue).alpha(0.5).rgbString(),
+                borderColor: chartColors.blue,
+                fill: false,
+                cubicInterpolationMode: 'monotone',
+                data: []
+            }]
+        },
+        options: {
+            responsive: true,
+            pointDotRadius: 20,
+            bezierCurve: true,
+            scales: {
+                xAxes: [{
+                    type: 'realtime',
+                    realtime: {
+                        duration: 15000,
+                        refresh: 1000,
+                        delay: 0,
+                        onRefresh: onRefresh_h
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: '%'
+                    }
+                }]
+            },
+            tooltips: {
+                mode: 'nearest',
+                intersect: false
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: false
+            }
+        }
+    };
+
+    window.onload = function() {
+        var cthh = document.getElementById('myHumidity').getContext('2d');
+        window.myHumidity = new Chart(cthh, config_h);
+    };
+</script>
+<script>
+    function ReconnectingWebSocket() {
+        if (window.location.protocol == 'https:') {
+            wsProtocol = 'wss://'
+        } else {
+            wsProtocol = 'ws://'
+        }
+        updateSocket = new WebSocket(
+            wsProtocol + window.location.host +
+            '/ws/dht11/');
+        updateSocket.onopen = function(e) {
+            console.log("Kết nối đã được mở ...", e.target.readyState);
+            let dht11 = {
+                'temperature': parseFloat($("#temperature")[0].children[0].textContent),
+                'humidity': parseFloat($("#humidity")[0].outerText.slice(0, 2))
+            };
+            let led = 2;
+            if ($('input[name=led]').is(':checked')) {
+                led = 1;
+            } else {
+                led = 0;
+            }
+            let msg = {
+                "dht11": dht11,
+                "led": led
+            }
+            updateSocket.send(JSON.stringify(msg));
+        };
+        updateSocket.onmessage = function(e) {
+            var msg = JSON.parse(e.data);
+            //$(".GaugeMeter").attr("data-percent") = msg["dht11"]["humidity"].toString() ;
+            $("#temperature").gaugeMeter({
+                percent: msg["dht11"]["temperature"]
+            });
+            $("#humidity").gaugeMeter({
+                percent: msg["dht11"]["humidity"]
+            });
+        };
+        updateSocket.onclose = function(e) {
+            console.log('Socket đã đóng.Sẽ cố gắng kết nối lại sau 3 giây...', e.reason);
+            setTimeout(function() {
+                ReconnectingWebSocket();
+            }, 3000);
+        };
+        updateSocket.onerror = function(err) {
+            console.log('Socket gặp lỗi : ', err.message, 'đang đóng socket');
+            updateSocket.close();
+        };
+        $(document).on('change', '[name="led"]', function() {
+            let dht11 = {
+                'temperature': parseFloat($("#temperature")[0].children[0].textContent),
+                'humidity': parseFloat($("#humidity")[0].outerText.slice(0, 2))
+            };
+            let checkbox = $(this); // Selected or current checkbox
+            //$('#led-state').prop('checked', true).change();
+            if (checkbox.is(':checked')) {
+                let led = 1;
+                let msg = {
+                    'dht11': dht11,
+                    'led': led
+                };
+                updateSocket.send(JSON.stringify(msg));
+            } else {
+                let led = 0;
+                let msg = {
+                    'dht11': dht11,
+                    'led': led
+                };
+                updateSocket.send(JSON.stringify(msg));
+            }
+        });
+    }
+    ReconnectingWebSocket();
+</script>
+<script>
+    $(document).ready(function() {
+        $('#basic-datatables').DataTable({});
+
+        $('#multi-filter-select').DataTable({
+            "pageLength": 11,
+            initComplete: function() {
+                this.api().columns().every(function() {
+                    var column = this;
+                    var select = $('<select class="form-control"><option value=""></option></select>')
+                        .appendTo($(column.footer()).empty())
+                        .on('change', function() {
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
+                        });
+
+                    column.data().unique().sort().each(function(d, j) {
+                        select.append('<option value="' + d + '">' + d + '</option>')
+                    });
+                });
+            }
+        });
+
+        // Add Row
+        $('#add-row').DataTable({
+            "pageLength": 11,
+        });
+
+        var action = '<td> <div class="form-button-action"> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
+
+        $('#addRowButton').click(function() {
+            $('#add-row').dataTable().fnAddData([
+                $("#addName").val(),
+                $("#addPosition").val(),
+                $("#addOffice").val(),
+                action
+            ]);
+            $('#addRowModal').modal('hide');
+
+        });
+    });
+</script>
+{% endblock javascripts %}

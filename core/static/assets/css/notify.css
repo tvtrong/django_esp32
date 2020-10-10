@@ -1,0 +1,27 @@
+.alert-minimalist {
+    background-color: rgb(46, 18, 124);
+    border-color: rgba(149, 149, 149, 0.3);
+    border-radius: 33px;
+    color: rgb(255, 255, 255);
+    padding: 10px;
+    -webkit-border-radius: 33px;
+    -moz-border-radius: 33px;
+    -ms-border-radius: 33px;
+    -o-border-radius: 33px;
+}
+
+.alert-minimalist>[data-notify="icon"] {
+    height: 50px;
+    margin-left: 5px;
+}
+
+.alert-minimalist>[data-notify="title"] {
+    color: rgb(253, 253, 253);
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.alert-minimalist>[data-notify="message"] {
+    font-size: 80%;
+}

@@ -1,0 +1,156 @@
+.card {
+    text-align: left;
+    position: relative;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-transition: -webkit-transform 0.5s;
+    transition: -webkit-transform 0.5s;
+    transition: transform 0.5s;
+    transition: transform 0.5s, -webkit-transform 0.5s;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    font-family: Arial, Sans-Serif;
+    width: 400px;
+    height: 600px;
+    color: white;
+    display: inline-block;
+    margin: 10px;
+}
+
+.card.flip {
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+    -webkit-transition: -webkit-transform 0.5s;
+    transition: -webkit-transform 0.5s;
+    transition: transform 0.5s;
+    transition: transform 0.5s, -webkit-transform 0.5s;
+}
+
+.card .face {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform: translateZ(0.1px);
+    transform: translateZ(0.1px);
+}
+
+.card .back {
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+}
+
+.card .face {
+    border-radius: 10px;
+}
+
+.card .front {
+    color: #ffffff;
+    background-color: #101010;
+}
+
+.card .front .logo {
+    width: 100px;
+    padding: 10px;
+}
+
+.card .back {
+    font-size: 18px;
+    line-height: 1.4em;
+    background: url(/static/assets/img/front.jpg) #333333;
+    background-size: cover;
+    color: #FFE81F;
+}
+
+.card .back img {
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom: 3px double #FFE81F;
+}
+
+.card .back .description {
+    padding: 30px;
+}
+
+.card .back .logo {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 100px;
+    padding: 10px;
+    border: none;
+}
+
+.card h2 {
+    text-transform: uppercase;
+    font-size: 58px;
+    position: absolute;
+    bottom: 70px;
+    margin: 0;
+    line-height: 0.7em;
+    padding: 10px;
+}
+
+.card h2 small {
+    font-size: 42px;
+}
+
+.card cite {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    font-size: 10px;
+    text-transform: uppercase;
+    padding: 20px;
+}
+
+.card cite a {
+    color: white;
+}
+
+.card cite a:visited {
+    text-decoration: none;
+    color: #aaaaaa;
+}
+
+.darth h2 {
+    font-size: 108px;
+    line-height: 0.55em;
+    bottom: 80px;
+}
+
+.darth .front {
+    background-image: url(/static/assets/img/back.jpg);
+    background-size: 130%;
+    background-position: 50% 50%;
+    -webkit-transition: background 0.3s;
+    transition: background 0.3s;
+}
+
+.darth .front:hover {
+    background-size: 200%;
+    background-position: 20% 30%;
+    -webkit-transition: background 0.5s;
+    transition: background 0.5s;
+}
+
+.mememe {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 10px;
+}
+
+.mememe a {
+    color: #eeff44;
+}
+
+.mememe a:visited {
+    color: #eeff44;
+}
